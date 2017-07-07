@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# Sublime files
+*.sublime-*
+
+# Build directory
+dist/
