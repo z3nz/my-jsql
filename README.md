@@ -23,8 +23,8 @@ var jsql = new MyJsql({
   database: 'my_db'
 });
 
-// Connect to the db
-jsql.con.connect();
+// Start the connection to the db
+jsql.start();
 
 // Set the table
 jsql.t('users');
@@ -57,6 +57,9 @@ jsql.d().w({
 jsql.run('SELECT * FROM users WHERE id=? AND first=?', [1,'John'], function(err, results, fields) {
   if (err) throw err;
   console.log('Result is: ', results[0]);
-})
+});
+
+// Stop the connection
+jsql.stop();
 
 ```

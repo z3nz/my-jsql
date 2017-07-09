@@ -2,9 +2,17 @@ import mysql from "mysql"
 
 export default class MyJsql {
 	constructor(config) {
-		let con = config.connection || config || {};
-		this.con = mysql.createConnection(con);
+		this.config = config;
+		this.con = mysql.createConnection(this.config);
 		this.Q = {};
+	}
+
+	start(args) {
+		this.con.connect(...arguments);
+	}
+
+	stop(args) {
+		this.con.end(...arguments);
 	}
 
 	i(args) {

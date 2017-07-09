@@ -10,11 +10,11 @@ describe('MyJsql', function() {
 
   it('assertions', function() {
     test.object(jsql);
+    test.object(jsql.config);
     test.object(jsql.Q);
     test.object(jsql.con);
-    test.function(jsql.con.connect);
-    test.function(jsql.con.query);
-    test.function(jsql.con.end);
+    test.function(jsql.start);
+    test.function(jsql.stop);
     test.function(jsql.i);
     test.function(jsql.s);
     test.function(jsql.u);
@@ -25,8 +25,8 @@ describe('MyJsql', function() {
     test.function(jsql.buildQuery);
   });
 
-  it('connect', function(done) {
-    jsql.con.connect(done);
+  it('start', function(done) {
+    jsql.start(done);
   });
 
   it('create db', function(done) {
@@ -127,6 +127,10 @@ describe('MyJsql', function() {
 
   it('drop db', function(done) {
     jsql.run('DROP DATABASE MyJsql_test_db', done);
+  });
+
+  it('stop', function(done) {
+    jsql.stop(done);
   });
 
 });
