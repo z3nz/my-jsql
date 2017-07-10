@@ -2,7 +2,7 @@
 Easy to use SQL query module for passing JavaScript objects instead of manually writing SQL
 
 ## Install
-```
+```bash
 npm install my-jsql
 ```
 
@@ -93,7 +93,7 @@ Refer to [mysql's connection options](https://www.npmjs.com/package/mysql#connec
 ### .start([callback])
 You can optionally pass a callback function.
 
-```
+```javascript
 jsql.start(function(err) {
   if (err) throw err;
   // The connection has started
@@ -103,7 +103,7 @@ jsql.start(function(err) {
 ### .stop([callback])
 You can optionally pass a callback function.
 
-```
+```javascript
 jsql.stop(function(err) {
   if (err) throw err;
   // The connection has stopped
