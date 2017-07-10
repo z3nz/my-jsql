@@ -7,20 +7,17 @@ export default class MyJsql {
 		this.Q = {};
 	}
 
-	start(args) {
+	start() {
 		this.con.connect(...arguments);
 	}
 
-	stop(args) {
+	stop() {
 		this.con.end(...arguments);
 	}
 
-	i(args) {
+	i() {
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
-				// case 'string':
-				// 	this.Q.table = arg;
-				// 	break;
 				case 'object':
 					this.Q.keys = Object.keys(arg);
 					this.Q.values = Object.values(arg);
@@ -31,16 +28,13 @@ export default class MyJsql {
 		return this;
 	}
 
-	s(args) {
+	s() {
 		let keys = ['*'];
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
 				case 'object':
 					keys = arg;
 					break;
-				// case 'string':
-				// 	this.Q.table = arg;
-				// 	break;
 			}
 		});
 
@@ -50,12 +44,9 @@ export default class MyJsql {
 		return this;
 	}
 
-	u(args) {
+	u() {
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
-				// case 'string':
-				// 	this.Q.table = arg;
-				// 	break;
 				case 'object':
 					this.Q.keys = Object.keys(arg);
 					this.Q.values = Object.values(arg);
@@ -67,16 +58,7 @@ export default class MyJsql {
 		return this;
 	}
 
-	d(args) {
-		let conditions = [];
-		this.each(arguments, (index, arg) => {
-			switch (typeof arg) {
-				// case 'string':
-				// 	this.Q.table = arg;
-				// 	break;
-			}
-		});
-
+	d() {
 		this.Q.type = 'delete';
 		this.Q.values = [];
 		return this;
@@ -90,7 +72,7 @@ export default class MyJsql {
 
 	// NOTE: this where function only uses the = operator, if another operator is needed, you will have
 	// to build the query manually
-	w(args) {
+	w() {
 		let conditions = [],
 			values = [];
 		this.each(arguments, (index, arg) => {
@@ -133,7 +115,7 @@ export default class MyJsql {
 		return this;
 	}
 
-	run(args) {
+	run() {
 		let query,
 			callback,
 			values = this.Q.values || [];
