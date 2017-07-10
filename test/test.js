@@ -23,6 +23,7 @@ describe('MyJsql', function() {
     test.function(jsql.w);
     test.function(jsql.run);
     test.function(jsql.buildQuery);
+    test.function(jsql.each);
   });
 
   it('start', function(done) {
@@ -90,6 +91,14 @@ describe('MyJsql', function() {
     jsql.s().w({last: 'Doe'}).run(function(e, r, f) {
       if (e) done(e);
       test.number(r.length).is(2)
+      done();
+    });
+  });
+
+  it('where condition as string', function(done) {
+    jsql.s().w('email LIKE ?', ['john%']).run(function(e, r, f) {
+      if (e) done(e);
+      test.number(r.length).is(1)
       done();
     });
   });

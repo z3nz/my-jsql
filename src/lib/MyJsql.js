@@ -18,9 +18,9 @@ export default class MyJsql {
 	i(args) {
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
-				case 'string':
-					this.Q.table = arg;
-					break;
+				// case 'string':
+				// 	this.Q.table = arg;
+				// 	break;
 				case 'object':
 					this.Q.keys = Object.keys(arg);
 					this.Q.values = Object.values(arg);
@@ -38,9 +38,9 @@ export default class MyJsql {
 				case 'object':
 					keys = arg;
 					break;
-				case 'string':
-					this.Q.table = arg;
-					break;
+				// case 'string':
+				// 	this.Q.table = arg;
+				// 	break;
 			}
 		});
 
@@ -53,9 +53,9 @@ export default class MyJsql {
 	u(args) {
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
-				case 'string':
-					this.Q.table = arg;
-					break;
+				// case 'string':
+				// 	this.Q.table = arg;
+				// 	break;
 				case 'object':
 					this.Q.keys = Object.keys(arg);
 					this.Q.values = Object.values(arg);
@@ -71,9 +71,9 @@ export default class MyJsql {
 		let conditions = [];
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
-				case 'string':
-					this.Q.table = arg;
-					break;
+				// case 'string':
+				// 	this.Q.table = arg;
+				// 	break;
 			}
 		});
 
@@ -94,28 +94,39 @@ export default class MyJsql {
 		let conditions = [],
 			values = [];
 		this.each(arguments, (index, arg) => {
-			let section = [];
-			this.each(arg, (key,value) => {
-				// if the key is 'not' then go through the nested object with the not condition
-				if (key.toLowerCase()==='not') {
-					this.each(value, (k, v) => {
-						if (v===null) {
-							section.push(`${k} is not null`)
-						} else {
-							section.push(`not ${k}=?`);
-							values.push(v);
-						}
-					});
-				} else {
-					if (value===null) {
-						section.push(`${key} is null`)
+			switch (typeof arg) {
+				case 'string':
+					conditions.push(arg);
+					break;
+				case 'object':
+					if (Array.isArray(arg)) {
+						values = arg;
 					} else {
-						section.push(`${key}=?`);
-						values.push(value);
+						let section = [];
+						this.each(arg, (key,value) => {
+							// if the key is 'not' then go through the nested object with the not condition
+							if (key.toLowerCase()==='not') {
+								this.each(value, (k, v) => {
+									if (v===null) {
+										section.push(`${k} is not null`)
+									} else {
+										section.push(`not ${k}=?`);
+										values.push(v);
+									}
+								});
+							} else {
+								if (value===null) {
+									section.push(`${key} is null`)
+								} else {
+									section.push(`${key}=?`);
+									values.push(value);
+								}
+							}
+						});
+						conditions.push(section.join(' and '));
 					}
-				}
-			});
-			conditions.push(section.join(' and '));
+					break;
+			}
 		});
 		this.Q.conditions = conditions;
 		this.Q.condition_values = values;
