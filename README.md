@@ -29,8 +29,8 @@ jsql.start();
 // Set the table
 jsql.t('users');
 
-// SELECT * FROM users WHERE id=1
-jsql.s().w({id: 1}).run(function(err, results, fields) {
+// SELECT * FROM users WHERE last='Doe' ORDER BY first DESC LIMIT 10 OFFSET 5 
+jsql.s().w({last: 'Doe'}).o({first: 'desc'}).l(10, 5).run(function(err, results, fields) {
   if (err) throw err;
   console.log('Result is: ', results[0]);
 });
@@ -202,7 +202,7 @@ If you want to use the `NOT` statement, pass a nested object with `not` as it's 
 
 ```javascript
 // SELECT * FROM users WHERE NOT id=1
-jsql.s().w({not: {id: 1}});
+jsql.s().w({not: {id: 1}}).run();
 ```
 
 Currently, when passing objects, this function only uses the `=` operator. If you need to use other operators, you will need to use the API below.
@@ -213,6 +213,34 @@ Pass the `WHERE` condition as a string. If you want to escape the values using t
 ```javascript
 // SELECT * FROM products WHERE price>=99.99 AND name LIKE 'a%'
 jsql.s().t('products').w('price>=? AND name LIKE ?', [99.99, 'a%']).run();
+```
+
+### .o([orderBy])
+Pass the `ORDER BY` statement as an object with the keys being the column names and the value being `asc` or `desc`. Pass nothing to clear the previous order by statement.
+
+```javascript
+// SELECT * FROM users ORDER BY first ASC, last DESC
+jsql.s().o({first: 'asc', last: 'desc'}).run();
+
+// Clearing the ORDER BY statement
+// SELECT * FROM users
+jsql.s().o().run();
+```
+
+### .l([limit[, offset]])
+Pass the `LIMIT` and `OFFSET` statements as ints. Pass nothing to clear the previous statement.
+
+```javascript
+// Only passing a limit
+// SELECT * FROM users LIMIT 10
+jsql.s().l(10).run();
+
+// Passing an offset too
+// SELECT * FROM users LIMIT 10 OFFSET 5
+jsql.s().l(10, 5).run();
+
+// Clearing the LIMIT statement
+jsql.s().l().run(); 
 ```
 
 ### .run([query[, values[, callback]]])

@@ -4,7 +4,17 @@ export default class MyJsql {
 	constructor(config) {
 		this.config = config;
 		this.con = mysql.createConnection(this.config);
-		this.Q = {};
+		this.Q = {
+			conditionValues: [],
+			conditions: [],
+			keys: [],
+			limit: '',
+			offset: '',
+			orderBy: [],
+			table: '',
+			type: '',
+			values: []
+		};
 	}
 
 	start() {
@@ -37,7 +47,6 @@ export default class MyJsql {
 					break;
 			}
 		});
-
 		this.Q.type = 'select';
 		this.Q.keys = keys;
 		this.Q.values = [];
@@ -53,7 +62,6 @@ export default class MyJsql {
 					break;
 			}
 		});
-
 		this.Q.type = 'update';
 		return this;
 	}
@@ -70,11 +78,9 @@ export default class MyJsql {
 		return this;
 	}
 
-	// NOTE: this where function only uses the = operator, if another operator is needed, you will have
-	// to build the query manually
 	w() {
 		let conditions = [],
-			values = [];
+			conditionValues = [];
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
 				case 'string':
@@ -82,18 +88,17 @@ export default class MyJsql {
 					break;
 				case 'object':
 					if (Array.isArray(arg)) {
-						values = arg;
+						conditionValues = arg;
 					} else {
 						let section = [];
-						this.each(arg, (key,value) => {
-							// if the key is 'not' then go through the nested object with the not condition
+						this.each(arg, (key, value) => {
 							if (key.toLowerCase()==='not') {
 								this.each(value, (k, v) => {
 									if (v===null) {
 										section.push(`${k} is not null`)
 									} else {
 										section.push(`not ${k}=?`);
-										values.push(v);
+										conditionValues.push(v);
 									}
 								});
 							} else {
@@ -101,7 +106,7 @@ export default class MyJsql {
 									section.push(`${key} is null`)
 								} else {
 									section.push(`${key}=?`);
-									values.push(value);
+									conditionValues.push(value);
 								}
 							}
 						});
@@ -111,14 +116,44 @@ export default class MyJsql {
 			}
 		});
 		this.Q.conditions = conditions;
-		this.Q.condition_values = values;
+		this.Q.conditionValues = conditionValues;
+		return this;
+	}
+
+	l() {
+		let limit = '',
+			offset = '';
+		this.each(arguments, (index, arg) => {
+			if (parseInt(index, 10)) {
+				offset = arg;
+			} else {
+				limit = arg;
+			}
+		});
+		this.Q.limit = limit;
+		this.Q.offset = offset;
+		return this;
+	}
+
+	o() {
+		let orderBy = [];
+		this.each(arguments, (index, arg) => {
+			switch (typeof arg) {
+				case 'object':
+					this.each(arg, (k, v) => {
+						orderBy.push(`${k} ${v}`);
+					});
+					break;
+			}
+		});
+		this.Q.orderBy = orderBy;
 		return this;
 	}
 
 	run() {
 		let query,
 			callback,
-			values = this.Q.values || [];
+			values = this.Q.values;
 
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
@@ -139,13 +174,9 @@ export default class MyJsql {
 		}
 
 		let queryArgs = [query];
+		values = values.concat(this.Q.conditionValues);
 		if (values.length) {
-			if (this.Q.condition_values) {
-				values = values.concat(this.Q.condition_values);
-			}
 			queryArgs.push(values);
-		} else if (this.Q.condition_values) {
-			queryArgs.push(this.Q.condition_values);
 		}
 		if (callback) {
 			queryArgs.push(callback);
@@ -161,13 +192,13 @@ export default class MyJsql {
 				query = `insert into ${this.Q.table} (${this.Q.keys.join()}) values (${Array(this.Q.values.length).fill('?').join()})`;
 				break;
 			case 'select':
-				query = `select ${this.Q.keys.join()} from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}`;
+				query = `select ${this.Q.keys.join()} from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}${this.Q.orderBy.length ? ` order by ${this.Q.orderBy.join()}` : ''}${this.Q.limit ? ` limit ${this.Q.limit}` : ''}${this.Q.offset ? `, ${this.Q.offset}` : ''}`;
 				break;
 			case 'update':
 				query = `update ${this.Q.table} set ${this.Q.keys.map((x) => {return `${x}=?`}).join()}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}`;
 				break;
 			case 'delete':
-				query = `delete from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}`
+				query = `delete from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}`;
 				break;
 		}
 		return query;

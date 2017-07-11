@@ -11,7 +11,16 @@ describe('MyJsql', function() {
   it('assertions', function() {
     test.object(jsql);
     test.object(jsql.config);
-    test.object(jsql.Q);
+    test.object(jsql.Q)
+      .hasProperty('conditionValues')
+      .hasProperty('conditions')
+      .hasProperty('keys')
+      .hasProperty('limit')
+      .hasProperty('offset')
+      .hasProperty('orderBy')
+      .hasProperty('table')
+      .hasProperty('type')
+      .hasProperty('values');
     test.object(jsql.con);
     test.function(jsql.start);
     test.function(jsql.stop);
@@ -111,18 +120,60 @@ describe('MyJsql', function() {
     });
   });
 
+  it('limit to one', function(done) {
+    jsql.s().w().l(1).run(function(e, r, f) {
+      if (e) done(e);
+      test.number(r.length).is(1)
+      done();
+    });
+  });
+
+  it('limit and offset by one', function(done) {
+    jsql.s().w().l(1, 1).run(function(e, r, f) {
+      if (e) done(e);
+      test.number(r.length).is(1)
+      test.object(r[0]).hasProperty('id', 2);
+      done();
+    });
+  });
+
   it('update John to Jack', function(done) {
     jsql.u({
       first: 'Jack'
     })
     .w({id: 1}).run(function(e) {
       if (e) done(e);
-      jsql.s().run(function(e, r, f) {
+      jsql.s().l().run(function(e, r, f) {
         if (e) done(e);
         test.object(r[0])
           .hasProperty('first', 'Jack');
         done();
       });
+    });
+  });
+
+  it('order by first', function(done) {
+    jsql.s().w().o({first: 'desc'}).run(function(e, r, f) {
+      if (e) done(e);
+      test.object(r[0]).hasProperty('first', 'Jane');
+      done();
+    });
+  });
+
+  it('order by id and first', function(done) {
+    jsql.s().w().o({id: 'desc', first: 'asc'}).run(function(e, r, f) {
+      if (e) done(e);
+      test.object(r[0]).hasProperty('first', 'Jane');
+      done();
+    });
+  });
+
+  it('select where limit and order by', function(done) {
+    jsql.s().w({last: 'Doe'}).l(2, 0).o({id: 'desc'}).run(function(e, r, f) {
+      if (e) done(e);
+      test.number(r.length).is(2);
+      test.object(r[0]).hasProperty('first', 'Jane');
+      done();
     });
   });
 
