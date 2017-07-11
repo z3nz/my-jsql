@@ -4,17 +4,7 @@ export default class MyJsql {
 	constructor(config) {
 		this.config = config;
 		this.con = mysql.createConnection(this.config);
-		this.Q = {
-			conditionValues: [],
-			conditions: [],
-			keys: [],
-			limit: '',
-			offset: '',
-			orderBy: [],
-			table: '',
-			type: '',
-			values: []
-		};
+		this.clear();
 	}
 
 	start() {
@@ -178,6 +168,21 @@ export default class MyJsql {
 		}
 
 		this.con.query(...queryArgs);
+	}
+
+	clear() {
+		this.Q = {
+			conditionValues: [],
+			conditions: [],
+			keys: [],
+			limit: '',
+			offset: '',
+			orderBy: [],
+			table: '',
+			type: '',
+			values: []
+		};
+		return this;
 	}
 
 	getQuery() {

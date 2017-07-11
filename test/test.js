@@ -31,6 +31,7 @@ describe('MyJsql', function() {
     test.function(jsql.t);
     test.function(jsql.w);
     test.function(jsql.run);
+    test.function(jsql.clear);
     test.function(jsql.getQuery);
     test.function(jsql.getValues);
     test.function(jsql.each);
@@ -234,6 +235,19 @@ describe('MyJsql', function() {
       if (e) done(e);
       test.number(r.length).is(2);
       test.object(r[0]).hasProperty('first', 'Jane');
+      done();
+    });
+  });
+
+  it('clear test', function(done) {
+    jsql.clear().s().t('users');
+
+    test.string(jsql.getQuery()).is('select * from users');
+    test.array(jsql.getValues()).is([]);
+
+    jsql.run(function(e, r, f) {
+      if (e) done(e);
+      test.number(r.length).is(2);
       done();
     });
   });

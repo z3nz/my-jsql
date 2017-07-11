@@ -7,7 +7,7 @@ npm install my-jsql
 ```
 
 ## About
-This module depends **heavily** on the [mysql](https://www.npmjs.com/package/mysql) module. It allows you to run basic SQL querys just by passing objects and you don't have to worry about escaping the variables.
+This module depends **heavily** on the [mysql](https://www.npmjs.com/package/mysql) module. It allows you to run basic SQL querys just by passing objects and you don't have to worry about escaping variables.
 
 ## Basic Usage
 Here are some examples
@@ -253,6 +253,24 @@ jsql.run('SELECT * FROM users WHERE id=? AND first=?', [1,'John'], function(err,
 });
 ```
 
+### .clear()
+Clears all statements (including the table).
+
+```javascript
+// SELECT * FROM users WHERE id=1 LIMIT 1
+jsql.s().w({id: 1}).l(1).run();
+
+// Where and limit statements are saved 
+// SELECT * FROM users WHERE id=1 LIMIT 1
+jsql.s().run();
+
+// Clears everything
+jsql.clear();
+
+// SELECT * FROM users
+jsql.s().t('users').run();
+```
+
 ### .getQuery()
 Returns the current SQL query as a string.
 
@@ -260,7 +278,7 @@ Returns the current SQL query as a string.
 jsql.s().w({id: 1});
 
 console.log(jsql.getQuery());
-// 'SELECT * FROM users WHERE id=?'
+// 'select * from users where id=?'
 ```
 
 ### .getValues()
