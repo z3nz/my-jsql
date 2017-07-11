@@ -1,6 +1,6 @@
 {
   "name": "my-jsql",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Easy to use SQL query module for passing JavaScript objects instead of manually writing SQL",
   "main": "./dist/index.js",
   "scripts": {
