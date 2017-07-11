@@ -126,7 +126,7 @@ jsql.i({first: 'John'}).t('users').run();
 ```
 
 ### .s([columns])
-Pass an array of strings in order to select certain columns. If no array is passed, all the columns will be returned `SELECT * FROM...`.
+Pass an array of strings in order to `SELECT` certain columns. If no array is passed, all the columns will be returned `SELECT * FROM...`.
 
 ```javascript
 // SELECT first, email FROM users
@@ -143,7 +143,7 @@ jsql.s().t('users').run(function(err, results, fields) {
 ```
 
 ### .i(data)
-Pass an object of the data you want to insert, with the keys being the table columns.
+Pass an object of the data you want to `INSERT`, with the keys being the table columns.
 
 ```javascript
 // INSERT INTO users (first, last, email) VALUES ('John', 'Doe', 'email@email.com')
@@ -158,7 +158,7 @@ jsql.i({
 ```
 
 ### .u(data)
-Pass an object of the data you want to update, with the keys being the table columns.
+Pass an object of the data you want to `UPDATE`, with the keys being the table columns.
 
 ```javascript
 // UPDATE users SET first='Jane' WHERE id=1
@@ -169,7 +169,7 @@ jsql.u({first: 'Jane'}).t('users').w({id: 1}).run(function(err, results, fields)
 ```
 
 ### .d()
-Nothing needs to be passed for a delete.
+Nothing needs to be passed for a `DELETE FROM`.
 
 ```javascript
 // DELETE FROM users WHERE id=1
@@ -180,7 +180,7 @@ jsql.d().t('users').w({id: 1}).run(function(err, results, fields) {
 ```
 
 ### .w([conditions1[, conditions2[, ...]]])
-Pass one or more objects as conditional statements. Statements in the same object are separated by `AND`. If you pass multiple objects, they are separated by `OR`. If nothing is passed, there will be no `WHERE...` statement. MyJsql also saves the last where statement, so you don't have to call it again, but this also means you need to clear if you don't want to reuse your previous statement.
+Pass one or more objects as conditional `WHERE` statements. Statements in the same object are separated by `AND`. If you pass multiple objects, they are separated by `OR`. If nothing is passed, there will be no `WHERE...` statement. MyJsql also saves the last where statement, so you don't have to call it again, but this also means you need to clear if you don't want to reuse your previous statement.
 
 ```javascript
 // SELECT * FROM users WHERE id=1 AND name='John'
@@ -251,6 +251,26 @@ jsql.run('SELECT * FROM users WHERE id=? AND first=?', [1,'John'], function(err,
   if (err) throw err;
   console.log('Result is: ', results[0]);
 });
+```
+
+### .getQuery()
+Returns the current SQL query as a string.
+
+```javascript
+jsql.s().w({id: 1});
+
+console.log(jsql.getQuery());
+// 'SELECT * FROM users WHERE id=?'
+```
+
+### .getValues()
+Returns the current values as an array.
+
+```javascript
+jsql.s().w({id: 1, first: 'John'});
+
+console.log(jsql.getValues());
+// [1, 'John']
 ```
 
 ### .each(variable, function)

@@ -124,7 +124,7 @@ export default class MyJsql {
 		let limit = '',
 			offset = '';
 		this.each(arguments, (index, arg) => {
-			if (parseInt(index, 10)) {
+			if (parseInt(index)) {
 				offset = arg;
 			} else {
 				limit = arg;
@@ -151,9 +151,9 @@ export default class MyJsql {
 	}
 
 	run() {
-		let query,
-			callback,
-			values = this.Q.values;
+		let query = this.getQuery(),
+			values = this.getValues(),
+			callback;
 
 		this.each(arguments, (index, arg) => {
 			switch (typeof arg) {
@@ -169,12 +169,7 @@ export default class MyJsql {
 			}
 		});
 
-		if (!query) {
-			query = this.buildQuery();
-		}
-
 		let queryArgs = [query];
-		values = values.concat(this.Q.conditionValues);
 		if (values.length) {
 			queryArgs.push(values);
 		}
@@ -185,14 +180,14 @@ export default class MyJsql {
 		this.con.query(...queryArgs);
 	}
 
-	buildQuery() {
+	getQuery() {
 		let query = '';
 		switch (this.Q.type) {
 			case 'insert':
 				query = `insert into ${this.Q.table} (${this.Q.keys.join()}) values (${Array(this.Q.values.length).fill('?').join()})`;
 				break;
 			case 'select':
-				query = `select ${this.Q.keys.join()} from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}${this.Q.orderBy.length ? ` order by ${this.Q.orderBy.join()}` : ''}${this.Q.limit ? ` limit ${this.Q.limit}` : ''}${this.Q.offset ? `, ${this.Q.offset}` : ''}`;
+				query = `select ${this.Q.keys.join()} from ${this.Q.table}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}${this.Q.orderBy.length ? ` order by ${this.Q.orderBy.join()}` : ''}${this.Q.limit ? ` limit ${this.Q.limit}` : ''}${this.Q.offset ? `,${this.Q.offset}` : ''}`;
 				break;
 			case 'update':
 				query = `update ${this.Q.table} set ${this.Q.keys.map((x) => {return `${x}=?`}).join()}${this.Q.conditions.length ? ` where (${this.Q.conditions.join(') or (')})` : ''}`;
@@ -202,6 +197,10 @@ export default class MyJsql {
 				break;
 		}
 		return query;
+	}
+
+	getValues() {
+		return this.Q.values.concat(this.Q.conditionValues);
 	}
 
 	each(a, f) {
