@@ -32,4 +32,4 @@ npm run build
 
 Commit, push to your fork and [submit a pull request](https://github.com/z3nz/my-jsql/compare).
 
-I'd love to review any pull requests and I'll try to respond ASAP. I'm currently still in the process of defining what my coding style preference is, so FWIW, try to stick to the style you see 😸 (eslint should also help).
+I'd love to review any pull requests and I'll try to respond ASAP. I'm currently still in the process of defining what my coding style preference is, so FWIW, try to stick to the style you see 😸
