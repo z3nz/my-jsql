@@ -1,6 +1,6 @@
 # Contributing
 
-This is my first open source projet and I welcome any and all pull requests.
+This is my first open source project and I welcome any and all pull requests.
 
 Fork, then clone the repo.
 
