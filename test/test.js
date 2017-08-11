@@ -1,16 +1,16 @@
-var test = require('unit.js');
-var MyJsql = require('../dist/index.js');
+var test = require('unit.js')
+var MyJsql = require('../dist/index.js')
 
-describe('MyJsql', function() {
+describe('MyJsql', function () {
   var jsql = new MyJsql({
     user: 'root',
     password: '',
     socketPath: '/run/mysqld/mysqld.sock'
-  });
+  })
 
-  it('assertions', function() {
-    test.object(jsql);
-    test.object(jsql.config);
+  it('assertions', function () {
+    test.object(jsql)
+    test.object(jsql.config)
     test.object(jsql.Q)
       .hasProperty('conditionValues')
       .hasProperty('conditions')
@@ -20,257 +20,256 @@ describe('MyJsql', function() {
       .hasProperty('orderBy')
       .hasProperty('table')
       .hasProperty('type')
-      .hasProperty('values');
-    test.object(jsql.con);
-    test.function(jsql.start);
-    test.function(jsql.stop);
-    test.function(jsql.i);
-    test.function(jsql.s);
-    test.function(jsql.u);
-    test.function(jsql.d);
-    test.function(jsql.t);
-    test.function(jsql.w);
-    test.function(jsql.run);
-    test.function(jsql.clear);
-    test.function(jsql.getQuery);
-    test.function(jsql.getValues);
-    test.function(jsql.each);
-  });
+      .hasProperty('values')
+    test.object(jsql.con)
+    test.function(jsql.start)
+    test.function(jsql.stop)
+    test.function(jsql.i)
+    test.function(jsql.s)
+    test.function(jsql.u)
+    test.function(jsql.d)
+    test.function(jsql.t)
+    test.function(jsql.w)
+    test.function(jsql.run)
+    test.function(jsql.clear)
+    test.function(jsql.getQuery)
+    test.function(jsql.getValues)
+    test.function(jsql.each)
+  })
 
-  it('start', function(done) {
-    jsql.start(done);
-  });
+  it('start', function (done) {
+    jsql.start(done)
+  })
 
-  it('create db', function(done) {
-    jsql.run('CREATE DATABASE MyJsql_test_db', done);
-  });
+  it('create db', function (done) {
+    jsql.run('CREATE DATABASE MyJsql_test_db', done)
+  })
 
-  it('use db', function(done) {
-    jsql.run('USE MyJsql_test_db', done);
-  });
+  it('use db', function (done) {
+    jsql.run('USE MyJsql_test_db', done)
+  })
 
-  it('create table', function(done) {
-    jsql.run('CREATE TABLE users (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, first VARCHAR(30) NOT NULL, last VARCHAR(30) NOT NULL, email VARCHAR(50), created TIMESTAMP)', done);
-  });
+  it('create table', function (done) {
+    jsql.run('CREATE TABLE users (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, first VARCHAR(30) NOT NULL, last VARCHAR(30) NOT NULL, email VARCHAR(50), created TIMESTAMP)', done)
+  })
 
-  it('set table', function() {
-    jsql.t('users');
-  });
+  it('set table', function () {
+    jsql.t('users')
+  })
 
-  it('insert John Doe', function(done) {
+  it('insert John Doe', function (done) {
     jsql.i({
       first: 'John',
       last: 'Doe',
       email: 'john@doe.com'
-    });
+    })
 
-    test.string(jsql.getQuery()).is('insert into users (first,last,email) values (?,?,?)');
-    test.array(jsql.getValues()).is(['John','Doe','john@doe.com']);
+    test.string(jsql.getQuery()).is('insert into users (first,last,email) values (?,?,?)')
+    test.array(jsql.getValues()).is(['John', 'Doe', 'john@doe.com'])
 
-    jsql.run(done);
-  });
+    jsql.run(done)
+  })
 
-  it('insert Jane Doe', function(done) {
+  it('insert Jane Doe', function (done) {
     jsql.i({
       first: 'Jane',
       last: 'Doe',
       email: 'jane@doe.com'
-    });
+    })
 
-    test.string(jsql.getQuery()).is('insert into users (first,last,email) values (?,?,?)');
-    test.array(jsql.getValues()).is(['Jane','Doe','jane@doe.com']);
+    test.string(jsql.getQuery()).is('insert into users (first,last,email) values (?,?,?)')
+    test.array(jsql.getValues()).is(['Jane', 'Doe', 'jane@doe.com'])
 
-    jsql.run(done);
-  });
+    jsql.run(done)
+  })
 
-  it('select John', function(done) {
-    jsql.s().w({first: 'John', last: 'Doe'});
+  it('select John', function (done) {
+    jsql.s().w({first: 'John', last: 'Doe'})
 
-    test.string(jsql.getQuery()).is('select * from users where (first=? and last=?)');
-    test.array(jsql.getValues()).is(['John','Doe']);
+    test.string(jsql.getQuery()).is('select * from users where (first=? and last=?)')
+    test.array(jsql.getValues()).is(['John', 'Doe'])
 
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
       test.object(r[0])
         .hasProperty('id', 1)
         .hasProperty('first', 'John')
         .hasProperty('last', 'Doe')
         .hasProperty('email', 'john@doe.com')
-        .hasProperty('created');
-      done();
-    });
-  });
-
-  it('select only one key', function(done) {
-    jsql.s(['first']).w({id: 1});
-
-    test.string(jsql.getQuery()).is('select first from users where (id=?)');
-    test.array(jsql.getValues()).is([1]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.object(r[0])
-        .hasProperty('first', 'John')
-        .hasNotProperty('last');
-      done();
-    });
-  });
-
-  it('select John and Jane', function(done) {
-    jsql.s().w({last: 'Doe'});
-
-    test.string(jsql.getQuery()).is('select * from users where (last=?)');
-    test.array(jsql.getValues()).is(['Doe']);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(2)
-      done();
-    });
-  });
-
-  it('where condition as string', function(done) {
-    jsql.s().w('email LIKE ?', ['john%']);
-
-    test.string(jsql.getQuery()).is('select * from users where (email LIKE ?)');
-    test.array(jsql.getValues()).is(['john%']);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(1)
-      done();
-    });
-  });
-
-  it('select John or Jane', function(done) {
-    jsql.s().w({id: 1},{id: 2});
-
-    test.string(jsql.getQuery()).is('select * from users where (id=?) or (id=?)');
-    test.array(jsql.getValues()).is([1,2]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(2)
-      done();
-    });
-  });
-
-  it('update John to Jack', function(done) {
-    jsql.u({first: 'Jack'}).w({id: 1});
-
-    test.string(jsql.getQuery()).is('update users set first=? where (id=?)');
-    test.array(jsql.getValues()).is(['Jack',1]);
-
-    jsql.run(function(e) {
-      if (e) done(e);
-      jsql.s().l().run(function(e, r, f) {
-        if (e) done(e);
-        test.object(r[0])
-          .hasProperty('first', 'Jack');
-        done();
-      });
-    });
-  });
-
-  it('order by first', function(done) {
-    jsql.s().w().o({first: 'desc'});
-
-    test.string(jsql.getQuery()).is('select * from users order by first desc');
-    test.array(jsql.getValues()).is([]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.object(r[0]).hasProperty('first', 'Jane');
-      done();
-    });
-  });
-
-  it('order by id and first', function(done) {
-    jsql.s().w().o({id: 'desc', first: 'asc'});
-
-    test.string(jsql.getQuery()).is('select * from users order by id desc,first asc');
-    test.array(jsql.getValues()).is([]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.object(r[0]).hasProperty('first', 'Jane');
-      done();
-    });
-  });
-
-  it('limit to one', function(done) {
-    jsql.s().w().o().l(1);
-
-    test.string(jsql.getQuery()).is('select * from users limit 1');
-    test.array(jsql.getValues()).is([]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(1)
-      done();
-    });
-  });
-
-  it('limit and offset by one', function(done) {
-    jsql.s().w().l(1, 1);
-
-    test.string(jsql.getQuery()).is('select * from users limit 1,1');
-    test.array(jsql.getValues()).is([]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(1)
-      test.object(r[0]).hasProperty('id', 2);
-      done();
-    });
-  });
-
-  it('select where order by and limit', function(done) {
-    jsql.s().w({last: 'Doe'}).o({id: 'desc'}).l(2);
-
-    test.string(jsql.getQuery()).is('select * from users where (last=?) order by id desc limit 2');
-    test.array(jsql.getValues()).is(['Doe']);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(2);
-      test.object(r[0]).hasProperty('first', 'Jane');
-      done();
-    });
-  });
-
-  it('clear test', function(done) {
-    jsql.clear().s().t('users');
-
-    test.string(jsql.getQuery()).is('select * from users');
-    test.array(jsql.getValues()).is([]);
-
-    jsql.run(function(e, r, f) {
-      if (e) done(e);
-      test.number(r.length).is(2);
-      done();
-    });
-  });
-
-  it('delete Jane', function(done) {
-    jsql.d().w({id: 2});
-
-    test.string(jsql.getQuery()).is('delete from users where (id=?)');
-    test.array(jsql.getValues()).is([2]);
-
-    jsql.run(function(e, r, f) {
-      test.number(r.affectedRows)
-        .is(1)
-      done();
-    });
+        .hasProperty('created')
+      done()
+    })
   })
 
-  it('drop db', function(done) {
-    jsql.run('DROP DATABASE MyJsql_test_db', done);
-  });
+  it('select only one key', function (done) {
+    jsql.s(['first']).w({id: 1})
 
-  it('stop', function(done) {
-    jsql.stop(done);
-  });
+    test.string(jsql.getQuery()).is('select first from users where (id=?)')
+    test.array(jsql.getValues()).is([1])
 
-});
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.object(r[0])
+        .hasProperty('first', 'John')
+        .hasNotProperty('last')
+      done()
+    })
+  })
+
+  it('select John and Jane', function (done) {
+    jsql.s().w({last: 'Doe'})
+
+    test.string(jsql.getQuery()).is('select * from users where (last=?)')
+    test.array(jsql.getValues()).is(['Doe'])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(2)
+      done()
+    })
+  })
+
+  it('where condition as string', function (done) {
+    jsql.s().w('email LIKE ?', ['john%'])
+
+    test.string(jsql.getQuery()).is('select * from users where (email LIKE ?)')
+    test.array(jsql.getValues()).is(['john%'])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(1)
+      done()
+    })
+  })
+
+  it('select John or Jane', function (done) {
+    jsql.s().w({id: 1}, {id: 2})
+
+    test.string(jsql.getQuery()).is('select * from users where (id=?) or (id=?)')
+    test.array(jsql.getValues()).is([1, 2])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(2)
+      done()
+    })
+  })
+
+  it('update John to Jack', function (done) {
+    jsql.u({first: 'Jack'}).w({id: 1})
+
+    test.string(jsql.getQuery()).is('update users set first=? where (id=?)')
+    test.array(jsql.getValues()).is(['Jack', 1])
+
+    jsql.run(function (e) {
+      if (e) done(e)
+      jsql.s().l().run(function (e, r, f) {
+        if (e) done(e)
+        test.object(r[0])
+          .hasProperty('first', 'Jack')
+        done()
+      })
+    })
+  })
+
+  it('order by first', function (done) {
+    jsql.s().w().o({first: 'desc'})
+
+    test.string(jsql.getQuery()).is('select * from users order by first desc')
+    test.array(jsql.getValues()).is([])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.object(r[0]).hasProperty('first', 'Jane')
+      done()
+    })
+  })
+
+  it('order by id and first', function (done) {
+    jsql.s().w().o({id: 'desc', first: 'asc'})
+
+    test.string(jsql.getQuery()).is('select * from users order by id desc,first asc')
+    test.array(jsql.getValues()).is([])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.object(r[0]).hasProperty('first', 'Jane')
+      done()
+    })
+  })
+
+  it('limit to one', function (done) {
+    jsql.s().w().o().l(1)
+
+    test.string(jsql.getQuery()).is('select * from users limit 1')
+    test.array(jsql.getValues()).is([])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(1)
+      done()
+    })
+  })
+
+  it('limit and offset by one', function (done) {
+    jsql.s().w().l(1, 1)
+
+    test.string(jsql.getQuery()).is('select * from users limit 1,1')
+    test.array(jsql.getValues()).is([])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(1)
+      test.object(r[0]).hasProperty('id', 2)
+      done()
+    })
+  })
+
+  it('select where order by and limit', function (done) {
+    jsql.s().w({last: 'Doe'}).o({id: 'desc'}).l(2)
+
+    test.string(jsql.getQuery()).is('select * from users where (last=?) order by id desc limit 2')
+    test.array(jsql.getValues()).is(['Doe'])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(2)
+      test.object(r[0]).hasProperty('first', 'Jane')
+      done()
+    })
+  })
+
+  it('clear test', function (done) {
+    jsql.clear().s().t('users')
+
+    test.string(jsql.getQuery()).is('select * from users')
+    test.array(jsql.getValues()).is([])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(2)
+      done()
+    })
+  })
+
+  it('delete Jane', function (done) {
+    jsql.d().w({id: 2})
+
+    test.string(jsql.getQuery()).is('delete from users where (id=?)')
+    test.array(jsql.getValues()).is([2])
+
+    jsql.run(function (e, r, f) {
+      test.number(r.affectedRows)
+        .is(1)
+      done()
+    })
+  })
+
+  it('drop db', function (done) {
+    jsql.run('DROP DATABASE MyJsql_test_db', done)
+  })
+
+  it('stop', function (done) {
+    jsql.stop(done)
+  })
+})

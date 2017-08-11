@@ -1,2 +1,2 @@
-import MyJsql from "./lib/MyJsql";
-module.exports = MyJsql;
+import MyJsql from './lib/MyJsql'
+module.exports = MyJsql
