@@ -1,13 +1,13 @@
 {
   "name": "my-jsql",
   "version": "1.5.2",
-  "description": "Easy to use SQL query module for passing JavaScript objects instead of manually writing SQL",
+  "description": "Easy to use module for building MySQL queries by passing JavaScript objects instead of manually writing SQL",
   "main": "./dist/index.js",
   "scripts": {
     "lint": "eslint src -c .eslintrc.js; eslint test -c .eslintrc.js",
     "fix": "eslint src -c .eslintrc.js --fix; eslint test -c .eslintrc.js --fix",
     "test": "mocha test",
-    "build": "npm run lint; babel src --presets babel-preset-es2015 --out-dir dist --minified --no-comments; npm test",
+    "build": "npm run lint; babel src --out-dir dist --minified --no-comments; npm test",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -31,11 +31,12 @@
   },
   "homepage": "https://github.com/z3nz/my-jsql#readme",
   "dependencies": {
-    "mysql": "^2.13.0"
+    "mysql": "^2.13.0",
+    "babel-polyfill": "^6.26.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "editorconfig": "^0.13.2",
     "eslint": "^4.2.0",
     "eslint-config-standard": "^10.2.1",
