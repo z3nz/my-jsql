@@ -50,7 +50,7 @@ describe('MyJsql', function () {
   })
 
   it('create table', function (done) {
-    jsql.run('CREATE TABLE users (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, first VARCHAR(30) NOT NULL, last VARCHAR(30) NOT NULL, email VARCHAR(50), created TIMESTAMP)', done)
+    jsql.run('CREATE TABLE users (id INT(?) UNSIGNED AUTO_INCREMENT PRIMARY KEY, first VARCHAR(30) NOT NULL, last VARCHAR(30) NOT NULL, email VARCHAR(50), created TIMESTAMP)', [6], done)
   })
 
   it('set table', function () {
@@ -239,6 +239,18 @@ describe('MyJsql', function () {
     })
   })
 
+  it('null and is not', function (done) {
+    jsql.clear().s().t('users').w({first: null, last: {not: 'Doo'}, email: {not: null}})
+
+    test.string(jsql.getQuery()).is('select * from users where (first is null and not last=? and email is not null)')
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.number(r.length).is(0)
+      done()
+    })
+  })
+
   it('clear test', function (done) {
     jsql.clear().s().t('users')
 
@@ -247,7 +259,23 @@ describe('MyJsql', function () {
 
     jsql.run(function (e, r, f) {
       if (e) done(e)
-      test.number(r.length).is(2)
+      var length = 0
+      jsql.each(r, function (r) {
+        length++
+      })
+      test.number(r.length).is(length)
+      done()
+    })
+  })
+
+  it('update all', function (done) {
+    jsql.u({email: null}).w()
+
+    test.string(jsql.getQuery()).is('update users set email=?')
+
+    jsql.run(function (e, r, f) {
+      test.number(r.affectedRows)
+        .is(2)
       done()
     })
   })
@@ -257,6 +285,18 @@ describe('MyJsql', function () {
 
     test.string(jsql.getQuery()).is('delete from users where (id=?)')
     test.array(jsql.getValues()).is([2])
+
+    jsql.run(function (e, r, f) {
+      test.number(r.affectedRows)
+        .is(1)
+      done()
+    })
+  })
+
+  it('delete all', function (done) {
+    jsql.d().w()
+
+    test.string(jsql.getQuery()).is('delete from users')
 
     jsql.run(function (e, r, f) {
       test.number(r.affectedRows)

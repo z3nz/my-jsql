@@ -1,6 +1,10 @@
 # my-jsql
 Easy to use SQL query module for passing JavaScript objects instead of manually writing SQL
 
+<p align="center">
+  <a href="https://codecov.io/github/z3nz/my-jsql?branch=master"><img src="https://img.shields.io/codecov/c/github/z3nz/my-jsql/master.svg" alt="Coverage Status"></a>
+</p>
+
 ## Install
 ```bash
 npm install my-jsql

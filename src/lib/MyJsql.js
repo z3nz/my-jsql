@@ -82,22 +82,23 @@ export default class MyJsql {
           } else {
             let section = []
             this.each(arg, (key, value) => {
-              if (key.toLowerCase() === 'not') {
+              if (typeof value === 'object' && value !== null) {
                 this.each(value, (k, v) => {
-                  if (v === null) {
-                    section.push(`${k} is not null`)
-                  } else {
-                    section.push(`not ${k}=?`)
-                    conditionValues.push(v)
+                  /* istanbul ignore else */
+                  if (k.toLowerCase() === 'not') {
+                    if (v === null) {
+                      section.push(`${key} is not null`)
+                    } else {
+                      section.push(`not ${key}=?`)
+                      conditionValues.push(v)
+                    }
                   }
                 })
+              } else if (value === null) {
+                section.push(`${key} is null`)
               } else {
-                if (value === null) {
-                  section.push(`${key} is null`)
-                } else {
-                  section.push(`${key}=?`)
-                  conditionValues.push(value)
-                }
+                section.push(`${key}=?`)
+                conditionValues.push(value)
               }
             })
             conditions.push(section.join(' and '))
@@ -160,12 +161,9 @@ export default class MyJsql {
     })
 
     let queryArgs = [query]
-    if (values.length) {
-      queryArgs.push(values)
-    }
-    if (callback) {
-      queryArgs.push(callback)
-    }
+    if (values.length) queryArgs.push(values)
+    /* istanbul ignore else */
+    if (callback) queryArgs.push(callback)
 
     this.con.query(...queryArgs)
   }

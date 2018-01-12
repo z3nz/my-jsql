@@ -6,9 +6,11 @@
   "scripts": {
     "lint": "eslint src -c .eslintrc.js; eslint test -c .eslintrc.js",
     "fix": "eslint src -c .eslintrc.js --fix; eslint test -c .eslintrc.js --fix",
-    "test": "mocha test",
-    "build": "npm run lint; babel src --out-dir dist --minified --no-comments; npm test",
-    "prepublishOnly": "npm run build"
+    "test": "NODE_ENV=test npm run compile && nyc --reporter=text --reporter=lcov mocha --require babel-core/register test",
+    "report": "npm test && codecov -t 1a80d33d-6845-4188-8a62-458e2f5b9dbc",
+    "compile": "babel src --out-dir dist --minified --no-comments",
+    "build": "npm run lint && npm run compile",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -36,7 +38,9 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-plugin-istanbul": "^4.1.5",
     "babel-preset-env": "^1.6.0",
+    "codecov": "^3.0.0",
     "editorconfig": "^0.13.2",
     "eslint": "^4.2.0",
     "eslint-config-standard": "^10.2.1",
@@ -45,7 +49,13 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "istanbul": "^0.4.5",
     "mocha": "^3.4.2",
+    "nyc": "^11.4.1",
     "unit.js": "^2.0.0"
+  },
+  "nyc": {
+    "sourceMap": false,
+    "instrument": false
   }
 }
