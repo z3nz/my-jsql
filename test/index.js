@@ -304,5 +304,4 @@ describe('MyJsql', function () {
   it('drop db', function (done) {
     jsql.run('DROP DATABASE MyJsql_test_db', done)
   })
-
 })
