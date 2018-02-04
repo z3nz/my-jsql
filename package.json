@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "lint": "eslint src -c .eslintrc.js; eslint test -c .eslintrc.js",
-    "fix": "eslint src -c .eslintrc.js --fix; eslint test -c .eslintrc.js --fix",
+    "lint:fix": "eslint src -c .eslintrc.js --fix; eslint test -c .eslintrc.js --fix",
     "test": "NODE_ENV=test npm run compile && nyc --reporter=text --reporter=lcov mocha --require babel-core/register test",
     "report": "npm test && codecov -t 1a80d33d-6845-4188-8a62-458e2f5b9dbc",
     "compile": "babel src --out-dir dist --minified --no-comments",
