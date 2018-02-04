@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/z3nz/my-jsql#readme",
   "dependencies": {
-    "mysql": "^2.13.0",
     "babel-polyfill": "^6.26.0"
   },
   "devDependencies": {
@@ -51,6 +50,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.4.2",
+    "mysql": "^2.15.0",
     "nyc": "^11.4.1",
     "unit.js": "^2.0.0"
   },

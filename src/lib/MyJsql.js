@@ -1,18 +1,7 @@
-import mysql from 'mysql'
-
 export default class MyJsql {
-  constructor (config) {
-    this.config = config
-    this.con = mysql.createConnection(this.config)
+  constructor (con) {
+    this.con = con
     this.clear()
-  }
-
-  start () {
-    this.con.connect(...arguments)
-  }
-
-  stop () {
-    this.con.end(...arguments)
   }
 
   i () {

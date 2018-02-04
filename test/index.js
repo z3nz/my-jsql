@@ -1,16 +1,18 @@
 var test = require('unit.js')
 var MyJsql = require('../dist/index.js')
+var mysql = require('mysql')
 
 describe('MyJsql', function () {
-  var jsql = new MyJsql({
+  var con = mysql.createConnection({
     user: 'root',
     password: '',
     socketPath: '/run/mysqld/mysqld.sock'
   })
+  con.connect()
+  var jsql = new MyJsql(con)
 
   it('assertions', function () {
     test.object(jsql)
-    test.object(jsql.config)
     test.object(jsql.Q)
       .hasProperty('conditionValues')
       .hasProperty('conditions')
@@ -22,8 +24,6 @@ describe('MyJsql', function () {
       .hasProperty('type')
       .hasProperty('values')
     test.object(jsql.con)
-    test.function(jsql.start)
-    test.function(jsql.stop)
     test.function(jsql.i)
     test.function(jsql.s)
     test.function(jsql.u)
@@ -35,10 +35,6 @@ describe('MyJsql', function () {
     test.function(jsql.getQuery)
     test.function(jsql.getValues)
     test.function(jsql.each)
-  })
-
-  it('start', function (done) {
-    jsql.start(done)
   })
 
   it('create db', function (done) {
@@ -309,7 +305,4 @@ describe('MyJsql', function () {
     jsql.run('DROP DATABASE MyJsql_test_db', done)
   })
 
-  it('stop', function (done) {
-    jsql.stop(done)
-  })
 })
