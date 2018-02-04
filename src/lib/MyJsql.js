@@ -18,16 +18,19 @@ export default class MyJsql {
   }
 
   s () {
-    let keys = ['*']
+    let keys = []
     this.each(arguments, (index, arg) => {
       switch (typeof arg) {
         case 'object':
-          keys = arg
+          keys = keys.concat(arg)
+          break
+        case 'string':
+          keys.push(arg)
           break
       }
     })
     this.Q.type = 'select'
-    this.Q.keys = keys
+    this.Q.keys = keys.length ? keys : ['*']
     this.Q.values = []
     return this
   }

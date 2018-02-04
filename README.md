@@ -11,25 +11,25 @@ npm install my-jsql
 ```
 
 ## About
-This module allows you to run basic SQL querys just by passing objects and you don't have to worry about escaping variables.
+This module allows you to run basic SQL queries by passing JavaScript objects. You also don't need to worry about escaping the variables you pass.
 
 ## Basic Usage
 Here are some examples
 
 ```javascript
 // As you can see, we are using the mysql module to create a connection
-var mysql = require('mysql')
-var MyJsql = require('my-jsql')
+const mysql = require('mysql')
+const MyJsql = require('my-jsql')
 
 // Create your connection and pass it to MyJsql
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: 'localhost',
   user: 'me',
   password: 'secret',
   database: 'my_db'
 })
 con.connect()
-var jsql = new MyJsql(con)
+const jsql = new MyJsql(con)
 
 // Set the table
 jsql.t('users')
@@ -98,7 +98,7 @@ Pass a database connection. This is a basic example using the [mysql](https://ww
 ```javascript
 const mysql = require('mysql')
 
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: 'localhost',
   user: 'me',
   password: 'secret',
@@ -107,7 +107,7 @@ var con = mysql.createConnection({
 
 con.connect()
 
-var jsql = new MyJsql(con)
+const jsql = new MyJsql(con)
 ```
 
 Refer to [mysql's docs](https://www.npmjs.com/package/mysql) to view which connections you can pass.
@@ -130,10 +130,21 @@ jsql
   .run()
 ```
 
-### .s([columns])
-Pass an array of strings in order to `SELECT` certain columns. If no array is passed, all the columns will be returned `SELECT * FROM...`.
+### .s([columns[, column]])
+Pass a string (or multiple strings) or an array of strings in order to `SELECT` certain columns. If nothing is passed, all the columns will be returned `SELECT * FROM...`.
 
 ```javascript
+// Passing strings
+// SELECT first, email FROM users
+jsql
+  .s('first', 'email')
+  .t('users')
+  .run((err, results, fields) => {
+    if (err) throw err
+    // These results will only return with the 'first' and 'email' columns
+  })
+
+// Passing an array
 // SELECT first, email FROM users
 jsql
   .s(['first', 'email'])

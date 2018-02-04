@@ -112,6 +112,38 @@ describe('MyJsql', function () {
     })
   })
 
+  it('select multiple keys', function (done) {
+    jsql.s('first', 'last').w({id: 1})
+
+    test.string(jsql.getQuery()).is('select first,last from users where (id=?)')
+    test.array(jsql.getValues()).is([1])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.object(r[0])
+        .hasProperty('first', 'John')
+        .hasProperty('last', 'Doe')
+        .hasNotProperty('id')
+      done()
+    })
+  })
+
+  it('select multiple key types', function (done) {
+    jsql.s('first', 'last', ['id']).w({id: 1})
+
+    test.string(jsql.getQuery()).is('select first,last,id from users where (id=?)')
+    test.array(jsql.getValues()).is([1])
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.object(r[0])
+        .hasProperty('first', 'John')
+        .hasProperty('last', 'Doe')
+        .hasProperty('id', 1)
+      done()
+    })
+  })
+
   it('select John and Jane', function (done) {
     jsql.s().w({last: 'Doe'})
 
