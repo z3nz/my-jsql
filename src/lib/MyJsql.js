@@ -1,6 +1,7 @@
 export default class MyJsql {
-  constructor (con) {
+  constructor (con, options = {}) {
     this.con = con
+    this.options = options
     this.clear()
   }
 
@@ -155,9 +156,16 @@ export default class MyJsql {
     let queryArgs = [query]
     if (values.length) queryArgs.push(values)
     /* istanbul ignore else */
-    if (callback) queryArgs.push(callback)
+    if (this.options.autoClear) this.clear()
 
-    this.con.query(...queryArgs)
+    return new Promise((resolve, reject) => {
+      queryArgs.push((err, results, fields) => {
+        if (callback) callback(err, results, fields)
+        if (err) reject(err)
+        else resolve(results)
+      })
+      this.con.query(...queryArgs)
+    })
   }
 
   clear () {

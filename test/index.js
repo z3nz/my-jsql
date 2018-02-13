@@ -296,8 +296,33 @@ describe('MyJsql', function () {
     })
   })
 
+  it('auto clear test', function (done) {
+    jsql = new MyJsql(con, { autoClear: true })
+
+    jsql.s('id').t('users').w({first: 'Jane'})
+    test.string(jsql.getQuery()).is('select id from users where (first=?)')
+
+    jsql.run(function (e, r, f) {
+      if (e) done(e)
+      test.string(jsql.s().t('users').getQuery()).is('select * from users')
+      done()
+    })
+  })
+
+  it('async await test', async function () {
+    var results
+    try {
+      results = await jsql.s('bad').t('users').run()
+      test.number(results.length).is(2)
+    } catch (e) {
+      test.error(e)
+      results = await jsql.s('id').t('users').run()
+      test.number(results.length).is(2)
+    }
+  })
+
   it('update all', function (done) {
-    jsql.u({email: null}).w()
+    jsql.u({email: null}).t('users')
 
     test.string(jsql.getQuery()).is('update users set email=?')
 
@@ -309,7 +334,7 @@ describe('MyJsql', function () {
   })
 
   it('delete Jane', function (done) {
-    jsql.d().w({id: 2})
+    jsql.d().t('users').w({id: 2})
 
     test.string(jsql.getQuery()).is('delete from users where (id=?)')
     test.array(jsql.getValues()).is([2])
@@ -322,7 +347,7 @@ describe('MyJsql', function () {
   })
 
   it('delete all', function (done) {
-    jsql.d().w()
+    jsql.d().t('users').w()
 
     test.string(jsql.getQuery()).is('delete from users')
 

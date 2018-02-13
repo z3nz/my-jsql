@@ -13,6 +13,26 @@ npm install my-jsql
 ## About
 This module allows you to run basic SQL queries by passing JavaScript objects. You also don't need to worry about escaping the variables you pass.
 
+## ES8 Ready
+```javascript
+(async () => {
+  const jsql = new MyJsql(con)
+
+  let first = 'John'
+  let last = 'Doe'
+
+  // SELECT * FROM users WHERE first='John' AND last='Doe'
+  const results = await jsql
+    .s()
+    .t('users')
+    .w({ first, last })
+    .run()
+
+  console.log(results)
+})()
+
+```
+
 ## Basic Usage
 Here are some examples
 
@@ -92,8 +112,8 @@ jsql.run('SELECT * FROM users WHERE id=? AND first=?', [1,'John'], (err, results
 ## API
 This section is devoted to the API documentation.
 
-### MyJsql(connection)
-Pass a database connection. This is a basic example using the [mysql](https://www.npmjs.com/package/mysql) module:
+### MyJsql(connection[, options])
+Pass a database connection. Currently only supports the [mysql](https://www.npmjs.com/package/mysql) module.
 
 ```javascript
 const mysql = require('mysql')
@@ -111,6 +131,12 @@ const jsql = new MyJsql(con)
 ```
 
 Refer to [mysql's docs](https://www.npmjs.com/package/mysql) to view which connections you can pass.
+
+Optionally pass an options object if you want to auto clear after calling `run()`:
+
+```javascript
+const jsql = new MyJsql(con, { autoClear: true })
+```
 
 ### .t(table)
 Pass a string of the table name.
