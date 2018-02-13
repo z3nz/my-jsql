@@ -135,6 +135,7 @@ Refer to [mysql's docs](https://www.npmjs.com/package/mysql) to view which conne
 Optionally pass an options object if you want to auto clear after calling `run()`:
 
 ```javascript
+
 const jsql = new MyJsql(con, { autoClear: true })
 ```
 
@@ -322,6 +323,30 @@ jsql.run('SELECT * FROM users WHERE id=? AND first=?', [1,'John'], (err, results
   if (err) throw err
   console.log('Result is: ', results[0])
 })
+```
+
+### promise .run()
+The `.run` function also returns a promise if you prefer to use `async await` or `.then` and `.catch`
+
+```javascript
+(async () => {
+  try {
+    const results = await jsql.run()
+    console.log(results)
+  } catch (err) {
+    throw err
+  }
+})()
+
+// or
+
+jsql.run()
+  .then(results => {
+    console.log(results)
+  })
+  .catch(err => {
+    throw err
+  })
 ```
 
 ### .clear()
