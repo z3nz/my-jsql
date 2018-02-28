@@ -1,7 +1,7 @@
 {
   "name": "my-jsql",
   "version": "2.2.1",
-  "description": "Easy to use module for building MySQL queries by passing JavaScript objects instead of manually writing SQL",
+  "description": "Easy to use SQL query builder",
   "main": "./dist/index.js",
   "scripts": {
     "lint": "eslint src -c .eslintrc.js; eslint test -c .eslintrc.js",
@@ -24,7 +24,11 @@
     "jsql",
     "jssql",
     "javascript",
-    "object"
+    "object",
+    "query",
+    "queries",
+    "build",
+    "builder"
   ],
   "author": "Adam Lynch <adamlynchmob@gmail.com> (https://github.com/z3nz)",
   "license": "MIT",
