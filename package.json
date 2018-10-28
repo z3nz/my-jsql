@@ -1,6 +1,6 @@
 {
   "name": "my-jsql",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Easy to use SQL query builder",
   "main": "./dist/index.js",
   "scripts": {
